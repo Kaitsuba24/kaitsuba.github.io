@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kaitsuba — профиль</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #000;
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: -50%;
+      background:
+        radial-gradient(circle at 25% 25%, rgba(255,255,255,0.06), transparent 45%),
+        radial-gradient(circle at 75% 75%, rgba(255,255,255,0.05), transparent 45%);
+      animation: float 22s ease-in-out infinite;
+      z-index: -2;
+    }
+
+    @keyframes float {
+      0%,100% { transform: translate(0,0) rotate(0deg); }
+      50%     { transform: translate(-4%,-4%) rotate(8deg); }
+    }
+
+    /* ===== Падающие белые точки (без хвостов) ===== */
+    .comets {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .comet {
+      position: absolute;
+      top: -200px;
+      background: #fff;
+      border-radius: 50%;
+      box-shadow:
+        0 0 8px rgba(255,255,255,1),
+        0 0 16px rgba(255,255,255,0.8),
+        0 0 28px rgba(255,255,255,0.5);
+      opacity: 0;
+      animation: cometFall linear infinite;
+      will-change: transform, opacity;
+    }
+
+    /* Падение строго вниз */
+    @keyframes cometFall {
+      0% {
+        transform: translateY(0);
+        opacity: 0;
+      }
+      8% {
+        opacity: 1;
+      }
+      92% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(calc(100vh + 200px));
+        opacity: 0;
+      }
+    }
+
+    .card {
+      position: relative;
+      background: rgba(8,8,8,0.85);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 28px;
+      padding: 48px 32px 26px;
+      max-width: 440px;
+      width: 100%;
+      text-align: center;
+      box-shadow:
+        0 0 80px rgba(255,255,255,0.06),
+        0 25px 80px rgba(0,0,0,0.9);
+      z-index: 2;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: 28px;
+      padding: 1.5px;
+      background: rgba(255, 255, 255, 0.45);
+      -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+              mask-composite: exclude;
+      pointer-events: none;
+    }
+
+    .avatar {
+      width: 132px; height: 132px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 20px;
+      filter: grayscale(100%) contrast(1.05);
+      border: 2px solid rgba(255,255,255,0.85);
+      box-shadow:
+        0 0 0 6px rgba(255,255,255,0.04),
+        0 0 40px rgba(255,255,255,0.25);
+      animation: pulse 3.5s ease-in-out infinite;
+      transition: filter 0.4s;
+    }
+
+    .avatar:hover {
+      filter: grayscale(0%) contrast(1);
+    }
+
+    @keyframes pulse {
+      0%,100% { box-shadow: 0 0 0 6px rgba(255,255,255,0.04), 0 0 40px rgba(255,255,255,0.25); }
+      50%     { box-shadow: 0 0 0 6px rgba(255,255,255,0.08), 0 0 60px rgba(255,255,255,0.45); }
+    }
+
+    h1 {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 24px;
+      font-weight: 400;
+      letter-spacing: 1px;
+      line-height: 1.4;
+      margin-bottom: 34px;
+      color: #ffffff;
+      text-shadow:
+        0 0 8px rgba(255, 255, 255, 0.9),
+        0 0 16px rgba(255, 255, 255, 0.6),
+        0 0 32px rgba(255, 255, 255, 0.35);
+    }
+
+    .links { display: flex; flex-direction: column; gap: 11px; }
+
+    .link {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 22px;
+      border-radius: 14px;
+      text-decoration: none;
+      color: #fff;
+      font-weight: 600;
+      font-size: 15px;
+      letter-spacing: 0.2px;
+      background: linear-gradient(180deg, #161616 0%, #0b0b0b 100%);
+      border: 1px solid rgba(255,255,255,0.08);
+      overflow: hidden;
+      cursor: pointer;
+      font-family: inherit;
+      text-align: left;
+      width: 100%;
+      isolation: isolate;
+      z-index: 0;
+      transition:
+        transform 0.25s cubic-bezier(.2,.8,.3,1.2),
+        border-color 0.3s,
+        box-shadow 0.3s;
+    }
+
+    .link .fill {
+      position: absolute;
+      border-radius: 50%;
+      background: radial-gradient(circle at center,
+        rgba(255,255,255,0.18) 0%,
+        rgba(255,255,255,0.14) 60%,
+        rgba(255,255,255,0.10) 100%);
+      transform: translate(-50%, -50%) scale(0);
+      transition: transform 0.8s cubic-bezier(.2,.9,.3,1.05);
+      pointer-events: none;
+      z-index: 1;
+      will-change: transform;
+    }
+
+    .link > svg,
+    .link .label,
+    .link .check-icon {
+      position: relative;
+      z-index: 3;
+      transition: color 0.3s;
+    }
+
+    .link .check-icon {
+      margin-left: auto;
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      opacity: 0;
+      transform: scale(0.5);
+      transition: opacity 0.3s, transform 0.3s;
+    }
+
+    .link.copied .check-icon {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .link:hover {
+      transform: translateY(-3px) scale(1.015);
+      border-color: rgba(255,255,255,0.45);
+      box-shadow:
+        0 10px 35px rgba(0,0,0,0.6),
+        0 0 25px rgba(255,255,255,0.12);
+    }
+
+    .link.copied {
+      border-color: rgba(255,255,255,0.7);
+      box-shadow: 0 0 30px rgba(255,255,255,0.2);
+    }
+
+    .link svg {
+      width: 22px; height: 22px;
+      fill: #fff;
+      flex-shrink: 0;
+      transition: transform 0.3s;
+    }
+
+    .link:hover svg {
+      transform: scale(1.1);
+    }
+
+    .ripple {
+      position: absolute;
+      border-radius: 50%;
+      background: radial-gradient(circle,
+        rgba(255,255,255,0.6) 0%,
+        rgba(255,255,255,0.25) 40%,
+        transparent 70%);
+      transform: scale(0);
+      animation: rippleAnim 0.75s cubic-bezier(.2,.9,.3,1.2);
+      pointer-events: none;
+      z-index: 4;
+    }
+
+    @keyframes rippleAnim {
+      0%   { transform: scale(0); opacity: 1; }
+      100% { transform: scale(2.5); opacity: 0; }
+    }
+
+    .counter {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 22px;
+      padding: 13px 22px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.07);
+      font-size: 13px;
+      color: #999;
+      letter-spacing: 0.3px;
+      transition: all 0.35s;
+    }
+
+    .counter:hover {
+      background: rgba(255,255,255,0.05);
+      border-color: rgba(255,255,255,0.25);
+      color: #fff;
+    }
+
+    .counter .dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 0 10px #fff;
+      animation: blink 2s infinite;
+    }
+
+    @keyframes blink {
+      0%,100% { opacity: 1; }
+      50%     { opacity: 0.3; }
+    }
+
+    .counter .num {
+      font-weight: 700;
+      color: #fff;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.5px;
+      font-size: 14px;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 26px;
+      left: 50%;
+      transform: translate(-50%, 200%) scale(0.6);
+      background: #000000;
+      color: #ffffff;
+      padding: 8px 14px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      box-shadow:
+        0 0 25px rgba(255,255,255,0.35),
+        0 0 50px rgba(255,255,255,0.15),
+        0 8px 25px rgba(0,0,0,0.6);
+      opacity: 0;
+      pointer-events: none;
+      transition:
+        transform 0.5s cubic-bezier(.2,1.4,.4,1),
+        opacity 0.3s;
+      z-index: 100;
+      white-space: nowrap;
+    }
+
+    .toast.show {
+      transform: translate(-50%, 0) scale(1);
+      opacity: 1;
+      animation: pop 0.6s ease-out;
+    }
+
+    @keyframes pop {
+      0%   { transform: translate(-50%, 0) scale(0.7); }
+      50%  { transform: translate(-50%, -6px) scale(1.1); }
+      100% { transform: translate(-50%, 0) scale(1); }
+    }
+
+    .toast .kbd {
+      background: #ffffff;
+      color: #000000;
+      padding: 3px 7px;
+      border-radius: 5px;
+      font-size: 11px;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .toast .plus {
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    @media (max-width: 420px) {
+      h1 { font-size: 18px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="comets" id="comets"></div>
+
+  <div class="card">
+    <!-- Аватарка: положи файл avatar.png рядом с index.html -->
+    <img class="avatar"
+         src="avatar.png"
+         alt="avatar"
+         onerror="this.src='https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Kaitsuba'">
+
+    <h1>Kaitsuba</h1>
+
+    <div class="links">
+      <!-- Discord -->
+      <button class="link" data-copy="https://discord.gg/7wsvyW96M6">
+        <span class="fill"></span>
+        <svg viewBox="0 0 24 24"><path d="M20.3 4.4A19.8 19.8 0 0 0 15.4 3l-.3.6a17 17 0 0 0-6.2 0L8.6 3A19.8 19.8 0 0 0 3.7 4.4 20.3 20.3 0 0 0 .2 18.1a19.9 19.9 0 0 0 6 3l1.3-2.1a12 12 0 0 1-2-.9l.5-.4a14.3 14.3 0 0 0 12 0l.5.4a12 12 0 0 1-2 .9l1.3 2.1a19.9 19.9 0 0 0 6-3A20.3 20.3 0 0 0 20.3 4.4ZM8.3 15.3c-1.2 0-2.1-1.1-2.1-2.4s.9-2.4 2.1-2.4 2.2 1.1 2.1 2.4c0 1.3-1 2.4-2.1 2.4Zm7.4 0c-1.2 0-2.1-1.1-2.1-2.4s.9-2.4 2.1-2.4 2.2 1.1 2.1 2.4c0 1.3-1 2.4-2.1 2.4Z"/></svg>
+        <span class="label">Discord</span>
+        <span class="check-icon">✓</span>
+      </button>
+
+      <!-- Telegram -->
+      <button class="link" data-copy="https://t.me/Kaitsuba">
+        <span class="fill"></span>
+        <svg viewBox="0 0 24 24"><path d="M9.8 15.6 9.6 19c.5 0 .7-.2 1-.5l2.4-2.3 5 3.6c.9.5 1.6.3 1.8-.8l3.3-15.3c.3-1.4-.5-2-1.5-1.6L1.7 9.5c-1.3.5-1.3 1.3-.2 1.6l4.6 1.5L16.7 5c.5-.3 1-.2.6.2L9.8 15.6Z"/></svg>
+        <span class="label">Telegram</span>
+        <span class="check-icon">✓</span>
+      </button>
+
+      <!-- YouTube -->
+      <button class="link" data-copy="https://www.youtube.com/@KAITSUBA_NIK">
+        <span class="fill"></span>
+        <svg viewBox="0 0 24 24"><path d="M23 6.5a3 3 0 0 0-2.1-2.1C19 3.9 12 3.9 12 3.9s-7 0-8.9.5A3 3 0 0 0 1 6.5 31 31 0 0 0 .5 12 31 31 0 0 0 1 17.5a3 3 0 0 0 2.1 2.1c1.9.5 8.9.5 8.9.5s7 0 8.9-.5a3 3 0 0 0 2.1-2.1 31 31 0 0 0 .5-5.5 31 31 0 0 0-.5-5.5ZM9.8 15.5V8.5l6 3.5-6 3.5Z"/></svg>
+        <span class="label">YouTube</span>
+        <span class="check-icon">✓</span>
+      </button>
+
+      <!-- Dotify -->
+      <button class="link" data-copy="https://share.dotify.fun/v2lD4wTE">
+        <span class="fill"></span>
+        <svg viewBox="0 0 24 24"><path d="M12 3v9.28a4.39 4.39 0 0 0-2.5-.78A4.5 4.5 0 1 0 14 16V6h4V4h-6v-.5a1.5 1.5 0 0 1 1.5-1.5H18V1h-3.5A3.5 3.5 0 0 0 11 4.5V3z"/></svg>
+        <span class="label">Dotify</span>
+        <span class="check-icon">✓</span>
+      </button>
+
+      <!-- Steam -->
+      <button class="link" data-copy="https://steamcommunity.com/profiles/76561199675490570/">
+        <span class="fill"></span>
+        <svg viewBox="0 0 512 512"><path d="M478.8 208.2a36 36 0 11-36-36 36 36 0 0136 36ZM442.6 139a69.42 69.42 0 00-69.4 68.7l-43.2 62a48.86 48.86 0 00-5.4-.3 51.27 51.27 0 00-26.4 7.3L102.4 198a51.8 51.8 0 10-50.6 62.9 51.27 51.27 0 0026.4-7.3L274 332.2a51.76 51.76 0 00102.1-5.9l66.5-48.6a69.35 69.35 0 100-138.7Zm0 22.9a46.45 46.45 0 11-46.5 46.5 46.54 46.54 0 0146.5-46.5Zm-390.8 9a38.18 38.18 0 0133.7 20.2l-18.9-7.6v.1a30.21 30.21 0 00-22.6 56v.1l16.1 6.4a36.8 36.8 0 01-8.2.9 38.05 38.05 0 01-.1-76.1Zm272.8 112.2a38.1 38.1 0 11-33.7 55.9c6.3 2.5 12.5 5 18.8 7.6a30.27 30.27 0 1022.5-56.2l-15.9-6.4a46.83 46.83 0 018.3-.9Z"/></svg>
+        <span class="label">Steam</span>
+        <span class="check-icon">✓</span>
+      </button>
+    </div>
+
+    <div class="counter">
+      <span class="dot"></span>
+      <span>посетителей:</span>
+      <span class="num" id="visits">...</span>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">
+    <span class="kbd">Ctrl</span>
+    <span class="plus">+</span>
+    <span class="kbd">C</span>
+  </div>
+
+  <script>
+    // ===== Падающие точки (без хвостов, медленные) =====
+    (function createComets() {
+      const container = document.getElementById('comets');
+      const COUNT = 40;
+
+      for (let i = 0; i < COUNT; i++) {
+        const c = document.createElement('span');
+        c.className = 'comet';
+
+        // Позиция по горизонтали
+        c.style.left = Math.random() * 100 + '%';
+
+        // Скорость падения — медленная (10–20 сек)
+        const duration = Math.random() * 10 + 10;
+        c.style.animationDuration = duration + 's';
+        c.style.animationDelay = (Math.random() * -30) + 's';
+
+        // Размер точки — от 1 до 5 px
+        const size = Math.random() * 4 + 1;
+        c.style.width = size + 'px';
+        c.style.height = size + 'px';
+
+        container.appendChild(c);
+      }
+    })();
+
+    // ===== ВОЛНА, ЗАПОЛНЯЮЩАЯ КНОПКУ =====
+    document.querySelectorAll('.link').forEach(btn => {
+      const fill = btn.querySelector('.fill');
+      if (!fill) return;
+
+      btn.addEventListener('mouseenter', e => {
+        const rect = btn.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        const dx = Math.max(x, rect.width - x);
+        const dy = Math.max(y, rect.height - y);
+        const radius = Math.sqrt(dx * dx + dy * dy) * 2;
+
+        fill.style.left = x + 'px';
+        fill.style.top  = y + 'px';
+        fill.style.width = radius + 'px';
+        fill.style.height = radius + 'px';
+
+        requestAnimationFrame(() => {
+          fill.style.transform = `translate(-50%, -50%) scale(1)`;
+        });
+      });
+
+      btn.addEventListener('mouseleave', e => {
+        const rect = btn.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        const dx = Math.max(x, rect.width - x);
+        const dy = Math.max(y, rect.height - y);
+        const radius = Math.sqrt(dx * dx + dy * dy) * 2;
+
+        fill.style.left = x + 'px';
+        fill.style.top  = y + 'px';
+        fill.style.width = radius + 'px';
+        fill.style.height = radius + 'px';
+
+        fill.style.transform = `translate(-50%, -50%) scale(0)`;
+      });
+    });
+
+    // ===== Копирование + Ripple + всплывашка =====
+    const toast = document.getElementById('toast');
+    let toastTimer;
+
+    document.querySelectorAll('.link').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        const text = btn.dataset.copy;
+
+        const rect = btn.getBoundingClientRect();
+        const ripple = document.createElement('span');
+        ripple.className = 'ripple';
+        const size = Math.max(rect.width, rect.height) * 1.2;
+        ripple.style.width = size + 'px';
+        ripple.style.height = size + 'px';
+        ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
+        ripple.style.top  = (e.clientY - rect.top  - size / 2) + 'px';
+        btn.appendChild(ripple);
+        setTimeout(() => ripple.remove(), 800);
+
+        try {
+          await navigator.clipboard.writeText(text);
+        } catch (err) {
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          ta.style.position = 'fixed';
+          ta.style.opacity = '0';
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+        }
+
+        btn.classList.add('copied');
+        setTimeout(() => btn.classList.remove('copied'), 1800);
+
+        toast.classList.remove('show');
+        void toast.offsetWidth;
+        toast.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toast.classList.remove('show'), 1800);
+      });
+    });
+
+    // ===== Счётчик посетителей =====
+    (async () => {
+      const KEY = 'kaitsuba-profile-site';
+      const el = document.getElementById('visits');
+
+      try {
+        const res = await fetch(`https://api.countapi.xyz/hit/${KEY}/visits`);
+        const data = await res.json();
+
+        const target = data.value;
+        const duration = 1200;
+        const start = performance.now();
+
+        const animate = (now) => {
+          const p = Math.min((now - start) / duration, 1);
+          const eased = 1 - Math.pow(1 - p, 3);
+          el.textContent = Math.floor(eased * target).toLocaleString('ru-RU');
+          if (p < 1) requestAnimationFrame(animate);
+        };
+        requestAnimationFrame(animate);
+      } catch (e) {
+        el.textContent = '—';
+        console.warn('Счётчик недоступен:', e);
+      }
+    })();
+  </script>
+</body>
+</html>
